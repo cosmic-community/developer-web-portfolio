@@ -102,5 +102,40 @@ export interface CosmicResponse<T> {
   skip?: number;
 }
 
+// Union type for all cosmic objects
+export type CosmicObjectType = Project | Skill | WorkExperience | Testimonial;
+
+// Type constraint for objects with metadata
+export type HasMetadata = {
+  metadata: Record<string, any>;
+};
+
+// Utility function with proper type constraint
+export function getMetadata<T extends HasMetadata>(obj: T): T['metadata'] {
+  return obj.metadata;
+}
+
+// Type guard functions
+export function isProject(obj: CosmicObject): obj is Project {
+  return obj.type === 'projects';
+}
+
+export function isSkill(obj: CosmicObject): obj is Skill {
+  return obj.type === 'skills';
+}
+
+export function isWorkExperience(obj: CosmicObject): obj is WorkExperience {
+  return obj.type === 'work-experience';
+}
+
+export function isTestimonial(obj: CosmicObject): obj is Testimonial {
+  return obj.type === 'testimonials';
+}
+
 // Utility types
-export type OptionalMetadata<T> = Partial<T['metadata']>;
+export type OptionalMetadata<T extends CosmicObject> = Partial<T['metadata']>;
+
+// Helper type for creating objects with optional metadata
+export type CreateCosmicObject<T extends CosmicObject> = Omit<T, 'id' | 'created_at' | 'modified_at'> & {
+  metadata: OptionalMetadata<T>;
+};
